@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Photo\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use DomainException;
 use Ramsey\Uuid\Nonstandard\Uuid;
 
 #[ORM\Entity]
@@ -13,15 +12,11 @@ use Ramsey\Uuid\Nonstandard\Uuid;
 class Photo
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'integer', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private ?int $id = null;
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
+    private string $fileId;
 
     #[ORM\Column(type: 'integer')]
     private int $type;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $fileId;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $host;
@@ -35,25 +30,25 @@ class Photo
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 20)]
     private string $ext;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $fields = null;
+    private ?string $fields;
 
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 7)]
+    #[ORM\Column(type: 'decimal', precision: 11, scale: 2)]
     private float $size;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $hash;
 
-    #[ORM\Column(type: 'string', length: 500, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $sizes = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $cropSquare = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $cropCustom = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => 0])]
@@ -82,8 +77,8 @@ class Photo
         float $size,
         string $hash,
     ) {
-        $this->type = $type;
         $this->fileId = Uuid::uuid4()->toString();
+        $this->type = $type;
         $this->host = $host;
         $this->hostS3 = $hostS3;
         $this->dir = $dir;
@@ -118,19 +113,6 @@ class Photo
             size: $size,
             hash: $hash,
         );
-    }
-
-    public function getId(): ?int
-    {
-        if (null === $this->id) {
-            throw new DomainException('Id not set');
-        }
-        return $this->id;
-    }
-
-    public function setId(?int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getType(): int

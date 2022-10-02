@@ -16,7 +16,7 @@ final class JsonDataResponse extends Response
             $status,
             new Headers(['Content-Type' => 'application/json']),
             (new StreamFactory())->createStream(json_encode([
-                'data' => $data,
+                'response' => $data,
             ]))
         );
     }

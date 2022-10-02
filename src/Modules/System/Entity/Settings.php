@@ -5,17 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\System\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use DomainException;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'settings')]
 class Settings
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'integer', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private ?int $id = null;
-
     #[ORM\Column(type: 'string', length: 50, unique: true)]
     private string $type;
 
@@ -68,19 +63,6 @@ class Settings
         $this->maxSize = $maxSize;
         $this->timeStorageNoUse = $timeStorageNoUse;
         $this->timeStorageDelete = $timeStorageDelete;
-    }
-
-    public function getId(): int
-    {
-        if (null === $this->id) {
-            throw new DomainException('Id not set');
-        }
-        return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getType(): string

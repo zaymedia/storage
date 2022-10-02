@@ -84,6 +84,7 @@ final class PhotoUploadHandler
         $photo->setCropCustom($processing->cropCustom);
 
         $this->photoRepository->add($photo);
+        $this->flusher->flush();
 
         return new PhotoUploadResult(
             host: env('SCHEME') . '://' . env('DOMAIN'),

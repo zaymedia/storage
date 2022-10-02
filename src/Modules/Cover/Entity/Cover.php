@@ -12,11 +12,7 @@ use Ramsey\Uuid\Nonstandard\Uuid;
 class Cover
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'integer', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private ?int $id = null;
-
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
     private string $fileId;
 
     #[ORM\Column(type: 'integer')]
@@ -34,13 +30,13 @@ class Cover
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 20)]
     private string $ext;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $fields = null;
+    private ?string $fields;
 
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 7)]
+    #[ORM\Column(type: 'decimal', precision: 11, scale: 2)]
     private float $size;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -78,8 +74,8 @@ class Cover
         float $size,
         string $hash,
     ) {
-        $this->mediaType = $mediaType;
         $this->fileId = Uuid::uuid4()->toString();
+        $this->mediaType = $mediaType;
         $this->host = $host;
         $this->hostS3 = $hostS3;
         $this->dir = $dir;

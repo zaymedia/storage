@@ -16,7 +16,7 @@ final class JsonDataSuccessResponse extends Response
             $status,
             new Headers(['Content-Type' => 'application/json']),
             (new StreamFactory())->createStream(json_encode([
-                'data' => [
+                'response' => [
                     'success' => $success,
                 ],
             ]))

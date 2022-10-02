@@ -49,8 +49,11 @@ final class UploadAction implements RequestHandlerInterface
 
         $this->validator->validate($command);
 
-        return new JsonDataResponse(
-            $this->handler->handle($command)
-        );
+        $result = $this->handler->handle($command);
+
+        return new JsonDataResponse([
+            'host' => $result->host,
+            'file_id' => $result->fileId,
+        ]);
     }
 }
