@@ -1,11 +1,16 @@
 FROM php:8.1-cli-alpine
 
-RUN apk update && apk add unzip coreutils
+ENV XDEBUG_VERSION 3.1.3
 
-RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
+RUN apk update && apk add --no-cache unzip bash coreutils git \
+    && git clone --branch $XDEBUG_VERSION --depth 1 https://github.com/xdebug/xdebug.git /usr/src/php/ext/xdebug \
+    && docker-php-ext-configure xdebug --enable-xdebug-dev \
+    && docker-php-ext-install pdo pdo_mysql sockets xdebug bcmath \
+    && apk del git
 
 RUN docker-php-ext-install exif
 
+# https://releasecandidate.dev/posts/2020/how-to-install-php-ext-intl-on-alpine-docker/
 RUN set -xe \
     && apk add --update \
         icu \
@@ -34,10 +39,18 @@ RUN apk add --update --no-cache freetype libpng libjpeg-turbo freetype-dev libpn
     && mkdir /var/lib/php  \
     && chown www-data:www-data /var/lib/php -R
 
-COPY ./common/php/conf.d /usr/local/etc/php/conf.d
+RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY ./common/php/conf.d /usr/local/etc/php/conf.d
+COPY ./development/php/conf.d /usr/local/etc/php/conf.d
+
+COPY ./common/wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod 555 /usr/local/bin/wait-for-it
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
 
+RUN addgroup -g 1000 app && adduser -u 1000 -G app -s /bin/sh -D app
+
 WORKDIR /app
+
+USER app

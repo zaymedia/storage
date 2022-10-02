@@ -1,13 +1,16 @@
 FROM php:8.1-fpm-alpine
 
-RUN apk update && apk add unzip
+ENV XDEBUG_VERSION 3.1.3
 
-RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
-
-RUN docker-php-ext-install pdo pdo_mysql
+RUN apk update && apk add --no-cache unzip git \
+    && git clone --branch $XDEBUG_VERSION --depth 1 https://github.com/xdebug/xdebug.git /usr/src/php/ext/xdebug \
+    && docker-php-ext-configure xdebug --enable-xdebug-dev \
+    && docker-php-ext-install pdo pdo_mysql sockets xdebug bcmath \
+    && apk del git
 
 RUN docker-php-ext-install exif
 
+# https://releasecandidate.dev/posts/2020/how-to-install-php-ext-intl-on-alpine-docker/
 RUN set -xe \
     && apk add --update \
         icu \
@@ -36,6 +39,12 @@ RUN apk add --update --no-cache freetype libpng libjpeg-turbo freetype-dev libpn
     && mkdir /var/lib/php  \
     && chown www-data:www-data /var/lib/php -R
 
+RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
+
 COPY ./common/php/conf.d /usr/local/etc/php/conf.d
+COPY ./development/php/conf.d /usr/local/etc/php/conf.d
 
 WORKDIR /app
+
+COPY ./development/php-fpm/entrypoint.sh /usr/local/bin/docker-php-entrypoint
+RUN chmod +x /usr/local/bin/docker-php-entrypoint

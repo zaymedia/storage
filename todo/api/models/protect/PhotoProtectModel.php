@@ -7,7 +7,7 @@ namespace api\models\protect;
 use api\entities\Photo;
 use api\entities\Cover;
 use api\classes\Model;
-use api\classes\Image;
+use api\classes\Imager;
 use api\entities\Video;
 use getID3;
 use api\classes\S3;
@@ -448,7 +448,7 @@ class PhotoProtectModel extends Model
             $path = ROOT_DIR . $path;
         }
 
-        $image = new Image($path);
+        $image = new Imager($path);
         return $image->optimize($quality, $rotate);
     }
 
@@ -466,10 +466,10 @@ class PhotoProtectModel extends Model
             $path = ROOT_DIR . $path;
         }
 
-        $image = new Image($path);
+        $image = new Imager($path);
         $resize_path = $image->resize($width, $quality, $prefix);
 
-        return Image::withoutRootDir(ROOT_DIR, ($resize_path) ? $resize_path : $path);
+        return Imager::withoutRootDir(ROOT_DIR, ($resize_path) ? $resize_path : $path);
     }
 
     /**
@@ -490,11 +490,11 @@ class PhotoProtectModel extends Model
             $path = ROOT_DIR . $path;
         }
 
-        $image  = new Image($path);
+        $image  = new Imager($path);
         $path   = $image->crop($default_params, $params, $quality);
 
         if ($path) {
-            return Image::withoutRootDir(ROOT_DIR, $path);
+            return Imager::withoutRootDir(ROOT_DIR, $path);
         }
 
         return false;
@@ -517,11 +517,11 @@ class PhotoProtectModel extends Model
             $path = ROOT_DIR . $path;
         }
 
-        $image  = new Image($path);
+        $image  = new Imager($path);
         $path   = $image->cropSquare($params, $quality);
 
         if ($path) {
-            return Image::withoutRootDir(ROOT_DIR, $path);
+            return Imager::withoutRootDir(ROOT_DIR, $path);
         }
 
         return false;

@@ -1,18 +1,14 @@
 init: init-ci
 init-ci: docker-down-clear \
 	docker-pull docker-build docker-up \
-	app-init
+	composer-install wait-db db-migrations
 
 up: docker-up
 down: docker-down
 restart: down up
 
-#linter and code-style
-lint: app-lint
-analyze: app-analyze
-cs-fix: app-cs-fix
-test: app-test
-
+#Check all
+check: lint analyze db-validate-schema test
 
 #Docker
 docker-up:
@@ -30,17 +26,61 @@ docker-pull:
 docker-build:
 	docker-compose build --pull
 
-#Composer
-app-init: app-composer-install
+wait-db:
+	docker-compose run --rm php-cli wait-for-it db:3306 -t 30
 
-app-composer-install:
+#Lint and analyze
+lint:
+	docker-compose run --rm php-cli composer lint
+	docker-compose run --rm php-cli composer php-cs-fixer fix -- --dry-run --diff
+
+cs-fix:
+	docker-compose run --rm php-cli composer php-cs-fixer fix
+
+analyze:
+	docker-compose run --rm php-cli composer psalm
+
+#DB
+db-validate-schema:
+	docker-compose run --rm php-cli composer app orm:validate-schema
+
+db-migrations-diff:
+	docker-compose run --rm php-cli composer app migrations:diff
+
+db-migrations:
+	docker-compose run --rm php-cli composer app migrations:migrate -- --no-interaction
+
+db-fixtures:
+	docker-compose run --rm php-cli composer app fixtures:load
+
+#Tests
+test:
+	docker-compose run --rm php-cli composer test
+
+test-coverage:
+	docker-compose run --rm php-cli composer test-coverage
+
+test-unit:
+	docker-compose run --rm php-cli composer test -- --testsuite=unit
+
+test-unit-coverage:
+	docker-compose run --rm php-cli composer test-coverage -- --testsuite=unit
+
+test-functional:
+	docker-compose run --rm php-cli composer test -- --testsuite=functional
+
+test-functional-coverage:
+	docker-compose run --rm php-cli composer test-coverage -- --testsuite=functional
+
+#Composer
+composer-install:
 	docker-compose run --rm php-cli composer install
 
-app-composer-update:
+composer-update:
 	docker-compose run --rm php-cli composer update
 
-app-composer-autoload: #refresh autoloader
+composer-autoload:
 	docker-compose run --rm php-cli composer dump-autoload
 
-app-composer-outdated: #get not updated
+composer-outdated:
 	docker-compose run --rm php-cli composer outdated
