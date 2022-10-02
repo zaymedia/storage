@@ -18,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
     path: '/photos',
     description: 'Загрузка изображения',
     summary: 'Загрузка изображения',
-    security: [['bearerAuth' => '{}']],
+    security: [['ApiKeyAuth' => '{}']],
     tags: ['Photos']
 )]
 #[OA\Response(

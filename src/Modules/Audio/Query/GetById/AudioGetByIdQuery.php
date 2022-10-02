@@ -11,8 +11,6 @@ final class AudioGetByIdQuery
     public function __construct(
         #[Assert\NotBlank]
         public readonly string $id,
-        #[Assert\NotBlank]
-        public readonly string $secretKey,
     ) {
     }
 }

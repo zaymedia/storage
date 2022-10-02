@@ -20,8 +20,18 @@ use Psr\Http\Server\RequestHandlerInterface;
     path: '/photos/{id}',
     description: 'Информация о файле по его идентификатору',
     summary: 'Информация о файле по его идентификатору',
-    security: [['bearerAuth' => '{}']],
+    security: [['ApiKeyAuth' => '{}']],
     tags: ['Photos']
+)]
+#[OA\Parameter(
+    name: 'id',
+    description: 'Идентификатор файла',
+    in: 'path',
+    required: true,
+    schema: new OA\Schema(
+        type: 'string',
+    ),
+    example: 1
 )]
 #[OA\Response(
     response: 200,
@@ -38,9 +48,10 @@ final class GetByIdAction implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        Authenticate::getApiKey($request);
+
         $query = new PhotoGetByIdQuery(
             id: Route::getArgument($request, 'id'),
-            secretKey: Authenticate::getSecretKey($request)
         );
 
         $this->validator->validate($query);

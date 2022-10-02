@@ -11,48 +11,51 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpUnauthorizedException;
 
+use function App\Components\env;
+
 final class Authenticate implements MiddlewareInterface
 {
-    private const ATTRIBUTE = 'secretKey';
+    private const ATTRIBUTE = 'apiKey';
 
-    public static function findSecretKey(ServerRequestInterface $request): ?string
+    public static function findApiKey(ServerRequestInterface $request): ?string
     {
-        $secretKey = $request->getAttribute(self::ATTRIBUTE);
+        /** @var string|null $apiKey */
+        $apiKey = $request->getAttribute(self::ATTRIBUTE);
 
-        if ($secretKey !== null && !\is_string($secretKey)) {
-            throw new LogicException('Invalid secretKey.');
+        if ($apiKey !== null && $apiKey !== env('API_KEY')) {
+            throw new LogicException('Invalid apiKey.', 409);
         }
 
-        return $secretKey;
+        return $apiKey;
     }
 
-    public static function getSecretKey(ServerRequestInterface $request): string
+    public static function getApiKey(ServerRequestInterface $request): string
     {
-        $secretKey = self::findSecretKey($request);
+        $apiKey = self::findapiKey($request);
 
-        if ($secretKey === null) {
+        if ($apiKey === null) {
             throw new HttpUnauthorizedException($request);
         }
 
-        return $secretKey;
+        return $apiKey;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$request->hasHeader('secretKey')) {
+        if (!$request->hasHeader('apiKey')) {
             return $handler->handle($request);
         }
 
-        $secretKey = $request->getHeaderLine('secretKey');
+        $apiKey = $request->getHeaderLine('apiKey');
 
-        if (!$this->validateSecretKey($secretKey)) {
+        if (!$this->validateApiKey($apiKey)) {
             throw new HttpUnauthorizedException($request);
         }
 
-        return $handler->handle($request->withAttribute(self::ATTRIBUTE, $secretKey));
+        return $handler->handle($request->withAttribute(self::ATTRIBUTE, $apiKey));
     }
 
-    private function validateSecretKey(string $key): bool
+    private function validateApiKey(string $key): bool
     {
         return $key !== '';
     }

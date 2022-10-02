@@ -12,7 +12,7 @@ final class PhotoResizeCommand
         #[Assert\NotBlank]
         public readonly string $fileId,
         #[Assert\NotBlank]
-        public readonly string $secretKey,
+        public readonly string $apiKey,
     ) {
     }
 }

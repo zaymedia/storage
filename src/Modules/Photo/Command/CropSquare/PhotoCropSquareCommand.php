@@ -12,7 +12,7 @@ final class PhotoCropSquareCommand
         #[Assert\NotBlank]
         public readonly string $fileId,
         #[Assert\NotBlank]
-        public readonly string $secretKey,
+        public readonly string $apiKey,
         public readonly ?int $left = null,
         public readonly ?int $top = null,
         public readonly ?int $width = null,

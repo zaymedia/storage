@@ -12,7 +12,7 @@ final class PhotoMarkDeleteCommand
         #[Assert\NotBlank]
         public readonly string $id,
         #[Assert\NotBlank]
-        public readonly string $secretKey,
+        public readonly string $apiKey,
     ) {
     }
 }

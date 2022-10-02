@@ -21,12 +21,10 @@ use function App\Components\env;
     url: '/v1/'
 )]
 #[OA\SecurityScheme(
-    securityScheme: 'bearerAuth',
-    type: 'http',
-    name: 'bearerAuth',
+    securityScheme: 'ApiKeyAuth',
+    type: 'apiKey',
+    name: 'apiKey',
     in: 'header',
-    bearerFormat: 'JWT',
-    scheme: 'bearer'
 )]
 #[OA\Tag(
     name: 'Photos',

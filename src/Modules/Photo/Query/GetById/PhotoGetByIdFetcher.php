@@ -23,8 +23,8 @@ final class PhotoGetByIdFetcher
 
         $result = $queryBuilder
             ->select('p.*')
-            ->from('photo', 'a')
-            ->where('p.id = :id')
+            ->from('photo', 'p')
+            ->where('p.file_id = :id')
             ->andWhere('p.deleted_at IS NULL')
             ->setParameter('id', $query->id)
             ->executeQuery()

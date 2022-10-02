@@ -14,8 +14,7 @@ class PhotoSerializer
 
         return [
             'id'            => $photo['id'],
-            'albumId'       => $photo['album_id'],
-            'userId'        => $photo['user_id'],
+            'fileId'       => $photo['file_id'],
         ];
     }
 }

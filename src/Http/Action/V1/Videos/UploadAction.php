@@ -18,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
     path: '/videos',
     description: 'Загрузка видеозаписи',
     summary: 'Загрузка видеозаписи',
-    security: [['bearerAuth' => '{}']],
+    security: [['ApiKeyAuth' => '{}']],
     tags: ['Videos']
 )]
 #[OA\Response(

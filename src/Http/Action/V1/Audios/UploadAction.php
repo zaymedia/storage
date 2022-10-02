@@ -18,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
     path: '/audios',
     description: 'Загрузка аудиозаписи',
     summary: 'Загрузка аудиозаписи',
-    security: [['bearerAuth' => '{}']],
+    security: [['ApiKeyAuth' => '{}']],
     tags: ['Audios']
 )]
 #[OA\Response(

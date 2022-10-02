@@ -19,8 +19,18 @@ use Psr\Http\Server\RequestHandlerInterface;
     path: '/audios/{id}',
     description: 'Помечает файл как удаленный',
     summary: 'Помечает файл как удаленный',
-    security: [['bearerAuth' => '{}']],
+    security: [['ApiKeyAuth' => '{}']],
     tags: ['Audios']
+)]
+#[OA\Parameter(
+    name: 'id',
+    description: 'Идентификатор файла',
+    in: 'path',
+    required: true,
+    schema: new OA\Schema(
+        type: 'string',
+    ),
+    example: 1
 )]
 #[OA\Response(
     response: '200',
@@ -38,7 +48,7 @@ final class MarkDeleteAction implements RequestHandlerInterface
     {
         $command = new AudioMarkDeleteCommand(
             id: Route::getArgument($request, 'id'),
-            secretKey: Authenticate::getSecretKey($request)
+            apiKey: Authenticate::getApiKey($request)
         );
 
         $this->validator->validate($command);

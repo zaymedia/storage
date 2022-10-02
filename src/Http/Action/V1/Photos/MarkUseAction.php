@@ -19,8 +19,18 @@ use Psr\Http\Server\RequestHandlerInterface;
     path: '/photos/{id}',
     description: 'Помечает файл как используемый',
     summary: 'Помечает файл как используемый',
-    security: [['bearerAuth' => '{}']],
+    security: [['ApiKeyAuth' => '{}']],
     tags: ['Photos']
+)]
+#[OA\Parameter(
+    name: 'id',
+    description: 'Идентификатор файла',
+    in: 'path',
+    required: true,
+    schema: new OA\Schema(
+        type: 'string',
+    ),
+    example: 1
 )]
 #[OA\Response(
     response: '200',
@@ -38,7 +48,7 @@ final class MarkUseAction implements RequestHandlerInterface
     {
         $command = new PhotoMarkUseCommand(
             id: Route::getArgument($request, 'id'),
-            secretKey: Authenticate::getSecretKey($request)
+            apiKey: Authenticate::getApiKey($request)
         );
 
         $this->validator->validate($command);
